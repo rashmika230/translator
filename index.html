@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global Text Translator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .title {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        .translator {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        .text-box {
+            width: 100%;
+        }
+
+        .controls-vertical {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            padding-top: 40px; /* Align with textareas */
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            margin-bottom: 10px;
+            background: #f8f9fa;
+            cursor: pointer;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            font-size: 16px;
+            resize: none;
+            background: #f8f9fa;
+            transition: border-color 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .translate-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .translate-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .swap-btn {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .swap-btn:hover {
+            background: #f0f2ff;
+            color: #764ba2;
+            border-color: #764ba2;
+        }
+
+        .button-text {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .translator {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+
+            .controls-vertical {
+                flex-direction: row;
+                padding-top: 0;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Global Text Translator</h1>
+        <div class="translator">
+            <div class="text-box">
+                <select id="fromLang">
+                    <option value="en">English</option>
+                    <option value="es">Spanish (Español)</option>
+                    <option value="fr">French (Français)</option>
+                    <option value="de">German (Deutsch)</option>
+                    <option value="zh">Chinese (中文)</option>
+                    <option value="hi">Hindi (हिन्दी)</option>
+                    <option value="ar">Arabic (العربية)</option>
+                    <!-- Add more language options as needed -->
+                </select>
+                <textarea id="fromText" placeholder="Enter text to translate..."></textarea>
+            </div>
+            
+            <div class="controls-vertical">
+                <button class="translate-btn" id="translateBtn" title="Translate">
+                    ➜
+                    <span class="button-text">Translate</span>
+                </button>
+                <button class="swap-btn" id="swapBtn" title="Swap Languages">
+                    ⇅
+                    <span class="button-text">Swap</span>
+                </button>
+            </div>
+
+            <div class="text-box">
+                <select id="toLang">
+                    <option value="es">Spanish (Español)</option>
+                    <option value="en">English</option>
+                    <option value="fr">French (Français)</option>
+                    <option value="de">German (Deutsch)</option>
+                    <option value="zh">Chinese (中文)</option>
+                    <option value="hi">Hindi (हिन्दी)</option>
+                    <option value="ar">Arabic (العربية)</option>
+                    <!-- Add more language options as needed -->
+                </select>
+                <textarea id="toText" placeholder="Translation" readonly></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fromText = document.getElementById('fromText');
+        const toText = document.getElementById('toText');
+        const fromLang = document.getElementById('fromLang');
+        const toLang = document.getElementById('toLang');
+        const translateBtn = document.getElementById('translateBtn');
+        const swapBtn = document.getElementById('swapBtn');
+
+        async function translateText() {
+            if (!fromText.value) {
+                alert('Please enter text to translate');
+                return;
+            }
+
+            toText.value = 'Translating...';
+            
+            try {
+                // Simulate translation delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Mock translation (reverse the text for demonstration)
+                toText.value = fromText.value.split('').reverse().join('');
+                
+                // For actual translation, you would use an API like:
+                /*
+                const response = await fetch('YOUR_TRANSLATION_API_ENDPOINT', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer YOUR_API_KEY'
+                    },
+                    body: JSON.stringify({
+                        text: fromText.value,
+                        source: fromLang.value,
+                        target: toLang.value
+                    })
+                });
+                const data = await response.json();
+                toText.value = data.translatedText;
+                */
+            } catch (error) {
+                toText.value = 'Translation failed. Please try again.';
+            }
+        }
+
+        function swapLanguages() {
+            // Swap languages
+            const tempLang = fromLang.value;
+            fromLang.value = toLang.value;
+            toLang.value = tempLang;
+
+            // Swap texts
+            const tempText = fromText.value;
+            fromText.value = toText.value;
+            toText.value = tempText;
+        }
+
+        // Event listeners
+        translateBtn.addEventListener('click', translateText);
+        swapBtn.addEventListener('click', swapLanguages);
+
+        // Auto-resize textarea
+        fromText.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
+    </script>
+</body>
+</html>
